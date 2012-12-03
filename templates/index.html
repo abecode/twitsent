@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<link href="http://68.181.174.147/twitsent/static/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div id="wrapper">
+    
+    <div id="intro">
+        <h1>Twitter Sentiment Analysis<br />Annotation Tool</h1>
+        <p>
+        To find out more about our project at the USC Annenberg Innovation Lab, visit out site: <a href="http://politics.twittersentiment.org/">http://politics.twittersentiment.org/streams/</a>
+        </p>
+        
+        <h2>Instructions</h2>
+        <p>
+        Below you are presented with a Twitter user's profile information and a tweet by the user. After reading the Twitter information carefully, fill in the respective options below. When you are done, press the Submit button.
+        </p>
+        <h2>Twitter Information</h2>
+    </div>
+    
+    <div id="profile">
+        <h3>PROFILE</h3>
+        <p>{{ username }}</p>
+        <p><img src="{{ user_avatar_url }}"></p>
+        <p>{{ user_bio }}</p>
+    </div>
+
+    <div id="tweet">
+        <h3>TWEET</h3>
+        <p>{{ tweet_text }}</p>
+        <p>{{ tweet_created_at }}</p>
+    </div>
+    
+    
+    <div id="annotation">
+        <h2>Annotation</h2>
+        <p>
+        Can this user be labelled as...
+        <form>
+        <input type="checkbox" name="userType" value="parody">Parody<br />
+        <input type="checkbox" name="userType" value="comedian">Comedian<br />
+        <input type="checkbox" name="userType" value="mediajournalist">Media/Journalist
+        </form>
+        </p>
+        
+        <p>
+        Is this tweet sarcastic?
+        <form>
+        <input type="radio" name="sarcasmQ" value="yes">Yes<br />
+        <input type="radio" name="sarcasmQ" value="no">No 
+        </form>
+        </p>
+        
+        <input type="submit" value="Submit">  
+    </div>
+    
+    <div id="footer">
+        <p>Thanks for participating!</p>
+    </div>
+    
+</div>
+
+</body>
+</html>
