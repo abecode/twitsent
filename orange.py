@@ -7,7 +7,7 @@ import random
 
 app = Flask(__name__)
 
-css = '/static/style.css'
+css = '/static/orange.css'
 
 @app.route("/")
 def displayOverview():
