@@ -1,0 +1,247 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="http://racer5.usc.edu/~orange/twitsent/static/style.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="http://racer5.usc.edu/~orange/dygraphs/dygraph-combined.js"></script>
+
+
+  <script type="text/javascript">
+
+
+// Load the Visualization API and the piechart package.
+google.load('visualization', '1.1', {'packages':['corechart','table','controls']});
+
+// Set a callback to run when the Google Visualization API is loaded.
+google.setOnLoadCallback(drawChart);
+
+// Callback that creates and populates a data table,
+// instantiates the pie chart, passes in the data and
+// draws it.
+function drawChart() {
+
+    var query = new google.visualization.Query(
+        //'https://docs.google.com/spreadsheet/tq?key=0AnkOZ_yxAvw2dEhIVzBBZ1BUV2ZmT3JjUVo3NFVLZkE&pub=1'
+        'http://spreadsheets.google.com/tq?key=0AnkOZ_yxAvw2dEhIVzBBZ1BUV2ZmT3JjUVo3NFVLZkE&pub=1'
+    );
+    query.setQuery('select A,B,G order by G');
+    query.send(handleQueryResponse);
+
+}
+
+function handleQueryResponse(response) {
+    if (response.isError()) {
+        alert('Error in query: ' + response.getMessage() + ' ' +
+              response.getDetailedMessage());
+        return;
+    }
+    var data = response.getDataTable();
+    var table = new google.visualization.ChartWrapper({
+        'chartType': 'Table',
+        'containerId': 'table_div',
+        //'dataTable': data
+    });
+
+
+    //var dataView = new google.visualization.DataView(data)
+    //var dataBySentiment = google.visualization.data.group(data, [1],
+    //                                                    [{'column':1,'aggregation': google.visualization.data.count, 'type': 'number'}]);
+    //var visualization2 = new google.visualization.PieChart(document.getElementById('chart_div'));
+    //visualization2.draw(dataBySentiment, {legend: 'bottom'});
+    var pie = new google.visualization.ChartWrapper({
+        'chartType': 'PieChart',
+        'containerId':'chart_div',
+        'dataTable':  google.visualization.data.group(data, [1],
+                                                      [{'column':1,'aggregation': google.visualization.data.count, 'type': 'number'}]),
+        'options': {
+            'legend': 'left',
+            'title': 'Sentiment distribution'
+        }
+    });
+    pie.draw();
+    var timeData = new google.visualization.DataTable();
+    timeData.addColumn('date', 'Date');
+    timeData.addColumn('number', 'Volume');
+    timeData.addColumn('string', 'title1');
+    timeData.addColumn('string', 'text1');
+    timeData.addRows([
+        [new Date(2012, 9, 1), 205, null, null],
+        [new Date(2012, 9, 2), 184, null, null],
+        [new Date(2012, 9, 3), 212, null, null],
+        [new Date(2012, 9, 4), 243, null, null],
+        [new Date(2012, 9, 5), 4157, 'test', 'Bla'],
+        [new Date(2012, 9, 6), 2931, null, null],
+        [new Date(2012, 9, 7), 2775, null, null],
+        [new Date(2012, 9, 8), 3894, null, null],
+        [new Date(2012, 9, 9), 4100, null, null],
+        [new Date(2012, 9,10), 2705, null, null],
+        [new Date(2012, 9,11), 3346, null, null],
+        [new Date(2012, 9,12), 9718, null, null],
+        [new Date(2012, 9,13), 3697, null, null],
+        [new Date(2012, 9,14), 3671, null, null],
+        [new Date(2012, 9,15), 6357, null, null],
+        [new Date(2012, 9,16), 8293, null, null],
+        [new Date(2012, 9,17), 5200, null, null],
+        [new Date(2012, 9,18), 4247, null, null],
+        [new Date(2012, 9,19), 4755, null, null],
+        [new Date(2012, 9,20), 3506, null, null],
+        [new Date(2012, 9,21), 3184, null, null],
+        [new Date(2012, 9,22), 2694, null, null]
+    ]);
+
+    g = new Dygraph(
+        document.getElementById('time_div'),
+        "20121001,  205\n"+
+            "20121002,  184\n"+
+            "20121003,  212\n"+
+            "20121004,  243\n"+
+            "20121005, 4157\n"+
+            "20121006, 2931\n"+
+            "20121007, 2775\n"+
+            "20121008, 3894\n"+
+            "20121009, 4100\n"+
+            "20121010, 2705\n"+
+            "20121011, 3346\n"+
+            "20121012, 9718\n"+
+            "20121013, 3697\n"+
+            "20121014, 3671\n"+
+            "20121015, 6357\n"+
+            "20121016, 8293\n"+
+            "20121017, 5200\n"+
+            "20121018, 4247\n"+
+            "20121019, 4755\n"+
+            "20121020, 3506\n"+
+            "20121021, 3184\n"+
+            "20121022, 2694\n",
+        {
+            'title':'Tweet Volume Time-Series'
+        }
+    );
+
+    //    timeSeries = new google.visualization.ChartWrapper({
+    //                             //'chartType': 'BubbleChart',
+    //                             'chartType': 'AnnotatedTimeLine',
+    //                             'containerId':'time_div',
+    //                             'dataTable':timeData,
+    //                             //'options':{'legend': 'bottom'}
+    //                             });
+    //    timeSeries.draw()
+
+
+    var slider = new google.visualization.ControlWrapper({
+        'controlType': 'NumberRangeFilter',
+        'containerId': 'slider_div',
+        //'dataTable':data,
+        'options': {
+            //'filterColumnLabel': 'valence',
+            'filterColumnIndex': 2,
+            'maxValue': 100.00,
+            'minValue': -100.00,
+            'ui': {
+                'label':'Valence Selector',
+                'ticks':100,
+                'labelStacking': 'horizontal',
+                'unitIncrement': 1,
+                'blockIncrement': 5,
+                'orientation': 'vertical'
+            }
+        }
+    });
+    //slider.draw()
+    var dashboard = new  google.visualization.Dashboard(document.getElementById('dashboard_div'));
+    dashboard.bind(slider,[table]);
+    dashboard.draw(data)
+
+    google.visualization.events.addListener( table, 'ready',
+                                             function(event) // group the data of the filtered table and set the result in the pie chart.
+                                             {
+                                                 var d = google.visualization.data.group( table.getDataTable(),
+                                                                                          [1],
+                                                                                          [{'column':1,'aggregation': google.visualization.data.count, 'type': 'number'}]);
+                                                 pie.setDataTable(d);
+                                                 pie.draw();
+
+                                             }
+                                           );
+
+    google.visualization.events.addListener( pie, 'select',
+                                             function() // group the data of the filtered table and set the result in the pie chart.
+                                             {
+                                                 var selection = pie.getChart().getSelection();
+                                                 if (selection.length === 0){
+                                                     return;
+                                                 }
+                                                 //console.log(selection);
+                                                 //console.log(selection[0]["row"]);
+                                                 //console.log( pie.getDataTable().getValue( selection[0]["row"]) );
+                                                 //console.log( pie.getDataTable().getValue( selection[0]["row"]),0);
+                                                 var val =  pie.getDataTable().getValue( selection[0]["row"],0);
+                                                 if(val == "positive"){
+                                                     data.sort([{column:2, desc: true}]);
+                                                 }else{
+                                                     data.sort([{column:2}]);
+                                                 }
+                                                 var view = new google.visualization.DataView(data);
+                                                 view.setRows(view.getFilteredRows([{column:1, value:val}]));
+                                                 var t = new google.visualization.Table(document.getElementById("table_div"));
+                                                 t.draw(view);
+
+                                             }
+                                           );
+}
+
+
+
+    </script>
+
+
+
+</head>
+
+<body>
+
+<div id="wrapper">
+    
+    <div id="intro">
+        <h1>Orange Twitter Analysis Prototypes</h1>
+        <p>Welcome to the Orange Twitter Analysis Prototypes. </p>
+
+
+    <div id="instructions">
+      <p> The time series chart
+      at the left shows volume of tweets and selects ranges of time.  To zoom
+      into a range of time, select/highlight it with the mouse or pinch if you are using
+      a multi-touch device (to unzoom, double click or unpinch).
+      The pie graph in the middle will be
+      updated to reflect the sentiment of the time range you select.  The
+      sections of the pie can be selected to show the corresponding tweets in
+      the table below. The slider
+      at the right allows you to select subsets of the tweets based on valence
+      ranges.  For example, to select positive tweets, move the lower slider
+      up, or to select neutral tweets, move the upper slider down and the lower
+      slider up so that the range enclosed the midpoint of the bar.
+      Underneath, you can see some of the tweets used to generate the charts.
+      Right now, the slider, pie chart, and data table are connected so that
+      the view of these will be updated to reflect the current selection.
+      The time-series is intended to do the same, but currently there is the
+      possibility that too much data will be returned and slow down the browser.
+	</p>
+    </div>
+
+    <div id="dashboard_div">
+      <div id="time_div" style="display:inline-block;width:45%;height:250px"></div>
+      <div id="chart_div" style="display:inline-block;width:35%;height:250px"></div>
+      <div id="slider_div" style="display:inline-block;width:5%"></div>
+      <div id="table_div"></div>
+    </div>
+
+    <div id="footer">
+        <p> To find out more about our project at the USC Annenberg Innovation Lab, visit out site: <a href="http://politics.twittersentiment.org/">http://politics.twittersentiment.org/streams/</a>
+        </p>
+    </div>
+    
+</div>
+
+</body>
+</html>
