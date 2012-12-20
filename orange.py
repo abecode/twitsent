@@ -14,9 +14,11 @@ import json
 import subprocess
 import sys
 host = subprocess.check_output('hostname').strip()
-dns = subprocess.check_output('dnsdomainname').strip()
-host = host + '.' + dns
-
+try:
+    dns = subprocess.check_output('dnsdomainname').strip()
+    host = host + '.' + dns
+except OSError:
+    pass #this happens when you are on a computer not set up as a server 
 app = Flask(__name__)
 
 css = '/static/orange.css'
