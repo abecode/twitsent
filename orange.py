@@ -10,6 +10,13 @@ import urlparse
 import json
 #from config import *
 
+#for setting up the host name
+import subprocess
+import sys
+host = subprocess.check_output('hostname').strip()
+dns = subprocess.check_output('dnsdomainname').strip()
+host = host + '.' + dns
+
 app = Flask(__name__)
 
 css = '/static/orange.css'
@@ -70,7 +77,6 @@ def catch_all(path):
     month = int(m.group(2))
     day = int(m.group(3))
     if m:
-        requestType=""
         if flask.request.query_string :
             output = {}
             output['table'] = getTweetData(year,month,day)
@@ -96,7 +102,8 @@ def catch_all(path):
             dygraphsTimeData = getDygraphsHourlyVolumeData(year,month,day)
             return render_template('orangeDayView.html', css=css,
                                    dygraphsTimeData=dygraphsTimeData,
-                                   year=year,month=month,day=day)
+                                   year=year,month=month,day="%02d"%day,
+                                   host=host)
     else:
         flask.abort(404)
         
@@ -109,4 +116,4 @@ def catch_all(path):
 
 if __name__ == '__main__':
     #app.run(host="homebrew.usc.edu", debug=True)
-    app.run(host="localhost", debug=True)
+    app.run(host='0.0.0.0', debug=True)
