@@ -69,7 +69,7 @@ def getTweetData(year,month,day):
         tweet,retweet,ts,sentiment,valence,neg,neu,pos,uns  = l.split("\t")
         valence = valence.strip() # address probelm converting to float
         try:
-            valence = float(valence)
+            valence = float(valence)*100 #scale to -100,100 for display purposes
         except TypeError:
             #valence = 0
             return "'%s'"%x[3]
