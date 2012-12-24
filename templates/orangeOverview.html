@@ -93,30 +93,43 @@ function handleQueryResponse(response) {
 
     g = new Dygraph(
         document.getElementById('time_div'),
-        "20121001,  205\n"+
-            "20121002,  184\n"+
-            "20121003,  212\n"+
-            "20121004,  243\n"+
-            "20121005, 4157\n"+
-            "20121006, 2931\n"+
-            "20121007, 2775\n"+
-            "20121008, 3894\n"+
-            "20121009, 4100\n"+
-            "20121010, 2705\n"+
-            "20121011, 3346\n"+
-            "20121012, 9718\n"+
-            "20121013, 3697\n"+
-            "20121014, 3671\n"+
-            "20121015, 6357\n"+
-            "20121016, 8293\n"+
-            "20121017, 5200\n"+
-            "20121018, 4247\n"+
-            "20121019, 4755\n"+
-            "20121020, 3506\n"+
-            "20121021, 3184\n"+
-            "20121022, 2694\n",
+            // "20121001,  205\n"+
+            // "20121002,  184\n"+
+            // "20121003,  212\n"+
+            // "20121004,  243\n"+
+            // "20121005, 4157\n"+
+            // "20121006, 2931\n"+
+            // "20121007, 2775\n"+
+            // "20121008, 3894\n"+
+            // "20121009, 4100\n"+
+            // "20121010, 2705\n"+
+            // "20121011, 3346\n"+
+            // "20121012, 9718\n"+
+            // "20121013, 3697\n"+
+            // "20121014, 3671\n"+
+            // "20121015, 6357\n"+
+            // "20121016, 8293\n"+
+            // "20121017, 5200\n"+
+            // "20121018, 4247\n"+
+            // "20121019, 4755\n"+
+            // "20121020, 3506\n"+
+            // "20121021, 3184\n"+
+            // "20121022, 2694\n",
+        {% autoescape false %}
+        {{dygraphsTimeData}}
+        {% endautoescape %}
         {
-            'title':'Tweet Volume Time-Series'
+            'title':'Tweet Volume Time-Series',
+             clickCallback: function(e, x, pts) {
+                //alert( "<b>Click</b> " + "("+e+","+x+","+pts+")" + "<br/>");
+                //alert(x);
+                var d = new Date(x);
+                //alert( "<b>Click</b> " + d.getFullYear() +"/"+(d.getMonth()+1)+"/"+d.getDate() + "<br/>");
+		var hostAddress= top.location.host.toString();
+		var destination = "http://"+hostAddress+"/"+d.getFullYear() +"/"+(d.getMonth()+1)+"/"+d.getDate();
+                //alert(destination)
+		 window.location = destination;
+              }
         }
     );
 
@@ -205,7 +218,7 @@ function handleQueryResponse(response) {
       
       <h1>Orange Twitter Analysis Prototypes</h1>
       <div id="intro">
-	<p>Welcome to the Orange Twitter Analysis Prototypes. </p>
+	<p>Month View/Overview </p>
       </div>
       
       <div id="instructions">

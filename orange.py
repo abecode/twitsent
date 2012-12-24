@@ -9,6 +9,7 @@ import re
 import urlparse
 import json
 #from config import *
+from collections import defaultdict
 
 #for setting up the host name
 import subprocess
@@ -25,8 +26,34 @@ css = '/static/orange.css'
 
 @app.route("/")
 def displayOverview():
-    return render_template('orangeOverview.html', css=css)
+    dygraphsData = getDygraphsDailyVolumeData()
+    return render_template('orangeOverview.html', css=css,
+                           dygraphsTimeData=dygraphsData)
 
+def getDygraphsDailyVolumeData():
+    columns = ['tweet','retweets','date','sentiment','valence','negative','neutral','positive','unsure']
+    dayCounts = defaultdict(int)
+    dayList = []
+    for line in open("static/orange/2012-12.tsv"):
+        fields = line.split('\t')
+        date = fields[columns.index('date')]
+        m = re.search(r'^(....)-(..)-(..)T(..)',date)
+        year = int(m.group(1))
+        month = int(m.group(2))
+        day = int(m.group(3))
+        hour = int(m.group(4))
+        #    month, day, hour = map(lambda x: getattr(re.search(r'^(....)-(..)-(..)T(..)',date), 'group')(x), [1,2,3,4])
+        dayCounts[(year,month,day)] +=1
+        if dayCounts[(year,month,day)] == 1:
+            dayList.append((year,month,day))
+    data = []
+    for day in dayList:
+        y,m,d = day
+        volume = dayCounts[day]
+        data.append("\"%s-%s-%s, %s \\n\""%(y,m,d,volume))
+    outString = "+".join(data) + ','
+    return outString
+        
 def getDygraphsHourlyVolumeData(year,month,day):
     f = open("static/orange/dayModels/hourlyCounts_%s-%s-%s"%(year,month,day))
     data = []
@@ -67,18 +94,21 @@ def getTweetData(year,month,day):
     return output
     
 
-@app.route('/<path:path>')
-def catch_all(path):
+#@app.route('/<path:path>')
+#def catch_all(path):
+@app.route('/<int:year>/<int:month>/<int:day>')
+def catch_all(year,month,day):
     if not app.debug:
         flask.abort(404)
-    if path == "favicon.ico":
-        flask.abort(404)
+#    if path == "favicon.ico":
+#        flask.abort(404)
     # check if path denotes a day
-    m  = re.search(r'^(\d\d\d\d)/(\d\d)/(\d\d)$', path)
-    year = int(m.group(1))
-    month = int(m.group(2))
-    day = int(m.group(3))
-    if m:
+#    m  = re.search(r'^(\d\d\d\d)/(\d\d)/(\d\d)$', path)
+#    year = int(m.group(1))
+#    month = int(m.group(2))
+#    day = int(m.group(3))
+#if m:
+    if True:
         if flask.request.query_string :
             output = {}
             output['table'] = getTweetData(year,month,day)
