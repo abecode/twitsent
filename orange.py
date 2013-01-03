@@ -17,7 +17,10 @@ import sys
 host = subprocess.check_output('hostname').strip()
 try:
     dns = subprocess.check_output('dnsdomainname').strip()
-    host = host + '.' + dns
+    if dns:
+        host = host + '.' + dns
+    else:
+        host = subprocess.check_output('hostname -i').strip()
 except OSError:
     pass #this happens when you are on a computer not set up as a server 
 app = Flask(__name__)
@@ -62,6 +65,36 @@ def getDygraphsHourlyVolumeData(year,month,day):
         data.append("\"%s-%s-%s %02d:00:00, %s \\n\""%(y,m,d,int(h),v))
     outString = "+".join(data) + ','
     return outString
+def getDygraphsHourlyVolumeData_new(searchYear,searchMonth,searchDay):
+    # setup column labes
+    columns = ['tweet','retweets','date','sentiment','valence','negative','neutral','positive','unsure']
+    
+    #dayModelFile = AutoVivification()
+    hourlyDict = defaultdict(int)
+    #dayModelFile = OrderedDict(int)
+    dayList = []
+    data = []
+# read tsv file
+    for line in open("static/orange/2012-12.tsv"):
+        fields = line.split('\t')
+        date = fields[columns.index('date')]
+        m = re.search(r'^(....)-(..)-(..)T(..)',date)
+        year = int(m.group(1))
+        month = int(m.group(2))
+        day = int(m.group(3))
+        hour = int(m.group(4))
+    #    month, day, hour = map(lambda x: getattr(re.search(r'^(....)-(..)-(..)T(..)',date), 'group')(x), [1,2,3,4])
+        if year ==searchYear and month==searchMonth and day==searchDay: 
+            hourlyDict[hour] +=1
+    data = []
+    for hr in range(0,24):
+        data.append("\"%s-%s-%s %02d:00:00, %s \\n\""%(searchYear,
+                                                       searchMonth,
+                                                       searchDay,
+                                                       hr,hourlyDict[hr]))
+    outString = "+".join(data) + ','
+    return outString
+
 def getTweetData(year,month,day):
     f = open("static/orange/%s-%s.tsv"%(year,month))
     data = []
@@ -131,7 +164,7 @@ def catch_all(year,month,day):
             return output
         else:
             requestType = "general" 
-            dygraphsTimeData = getDygraphsHourlyVolumeData(year,month,day)
+            dygraphsTimeData = getDygraphsHourlyVolumeData_new(year,month,day)
             return render_template('orangeDayView.html', css=css,
                                    dygraphsTimeData=dygraphsTimeData,
                                    year=year,month=month,day="%02d"%day,
