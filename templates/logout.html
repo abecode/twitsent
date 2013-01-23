@@ -1,0 +1,20 @@
+<html>
+  <head>  
+    <title="logout">
+  </head>
+  <body>
+    <h1> Goodbye </h1>
+    {{ blob }}
+
+    <p> Thank you for completing the annotation task.  If you completed this
+    task through Amazon Mechanical Turk, please copy and paste the following
+    completion code back into the mechanical turk hit: </p>
+    <h4> {{sessionid}} </h4>
+    <p> If you would like to annotate again, please click the restart button, below. </p>
+    <form name="start"  method="get">
+      <input type="hidden" name="cmd" value="restart">
+      <input type="submit" value="restart" />
+    </form>
+
+  </body>
+</html>

@@ -1,0 +1,15 @@
+<html>
+  <head>  
+    <title="Annotate">
+  </head>
+  <body>
+    <h1> Annotate </h1>
+    {{ blob }}
+    <p> Hello {{username}}, your session is {{sessionid}} an you have done
+    {{count}} annotations </p>
+    <form name="start"  method="get" action="{{next}}">
+      <input type="hidden" name="cmd" value="annotate">
+      <input type="submit" value="Continue" />
+    </form>
+  </body>
+</html>

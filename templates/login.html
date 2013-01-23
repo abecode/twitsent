@@ -1,0 +1,26 @@
+<html>
+  <head>  
+    <title="Login">
+  </head>
+  <body>
+    <h1> Please Log In </h1>
+    {{ blob }}
+    <form name="start"  method="get" action="{{next}}">
+      <input type="text"   name="age" id="age">
+      <label for="age">Age</label>
+      <br/>
+      <input type="text"   name="gender" id="gender">
+      <label for="gender">Gender</label>
+      <br/>
+      <input type="text"   name="nativeLanguage" id="nativeLanguage">
+      <label for="nativeLanguage">Native language</label>
+      <br/>
+      <input type="text"   name="countryOfResidence" id="countryOfResidence">
+      <label for="countryOfResidence">Country of Residence</label>
+      <br/>
+      <input type="hidden" name="cmd" value="annotate">
+      <br/>
+      <input type="submit" value="Log In" />
+    </form>
+  </body>
+</html>

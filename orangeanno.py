@@ -10,6 +10,8 @@ from flask import render_template
 #from config import *
 from collections import defaultdict
 
+MAX_ANNOTATIONS = 10
+
 #for setting up the host name
 import subprocess
 import sys
@@ -27,50 +29,67 @@ app.secret_key = 'orangeannotation123'
 css = '/static/orange.css'
 
 @app.route("/")
-def dispatch():
+def start():
     #blob = flask.request.cookies
-    blob = flask.request.environ
+    #blob = flask.request.environ
     #if the user is already logged in:
-    if flask.request.args.get('cmd')=="login":
-        return flask.redirect(flask.url_for("login"))
-    #if the user is trying to log in
-    if flask.request.args.get('cmd'):
-            
-        return render_template('login.html', css=css, blob=blob)
-    else:
-        return render_template('welcome.html', css=css, blob=blob)
+    # if 'sessionid' in flask.session:
+    #     if flask.session.get('count') > MAX_ANNOTATIONS:
+    #         return flask.redirect(flask.url_for("logout"))
+    #     else:
+    #         return flask.redirect(flask.url_for("annotate"))
+    # #if the user is trying to log in
+    # elif flask.request.args.get('cmd')=="login":
+        
+    #     return flask.redirect(flask.url_for("login"))
+    # else:
+    return render_template('welcome.html', next="/login")#, blob=blob)
 
 @app.route("/annotate")
 def annotate():
     #blob = flask.request.cookies
     blob = flask.request.environ
-    username = flask.session.get('username')
     sessionid = flask.session.get('sessionid')
     count = flask.session.get('count')
-    return render_template('annotate.html', css=css, 
-                           blob=blob,
-                           username=username,
+    count += 1
+    flask.session['count'] = count
+    if flask.session.get('count') > MAX_ANNOTATIONS:
+        return flask.redirect(flask.url_for("logout"))
+    
+
+    return render_template('annotate.html', 
+                           next="/annotate",
+                           #css=css, 
+                           #blob=blob,
                            sessionid=sessionid,
-                           count=count)
+                           count=count-1)
 
 @app.route("/login")
 def login():
     #blob = flask.request.cookies
     blob = flask.request.environ
-    if flask.request.args.get('username'):
+    if not flask.request.args.get('sessionid'):
             #set username, session id, and count=0 in cookie
-            flask.session['username'] = flask.request.args.get('username')
             import uuid
             flask.session['sessionid'] = uuid.uuid4()
             flask.session['count'] = 0
             return flask.redirect(flask.url_for('annotate'))
-    return render_template('login.html', css=css, blob=blob)
+    else:
+        #return render_template('login.html', css=css)#, blob=blob)
+        return flask.redirect(flask.url_for('annotate'))
 
 @app.route("/logout")
 def logout():
     #blob = flask.request.cookies
     blob = flask.request.environ
-    return render_template('logout.html', css=css, blob=blob)
+    sessionid = flask.session.get('sessionid')
+    count = flask.session.get('count')
+    #return flask.redirect(flask.url_for('dispatch'))
+    if flask.request.args.get('cmd') == "restart":
+        flask.session.pop('count', None)
+        flask.session.pop('sessionid', None)
+        return flask.redirect(flask.url_for('start'))
+    return render_template('logout.html', css=css,sessionid=sessionid)#, blob=blob)
 
 
 if __name__ == '__main__':
