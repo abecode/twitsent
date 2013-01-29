@@ -82,6 +82,8 @@ def getDygraphsHourlyVolumeData_new(searchYear,searchMonth,searchDay):
     dayList = []
     data = []
 
+    #TO-DO : Check if find() returns all entries or just the first 20. Also find the difference between find() and find({})
+
     for entry in collection.find():
     # for line in open("static/orange/2012-12.tsv"):
         # fields = line.split('\t')
@@ -103,6 +105,9 @@ def getDygraphsHourlyVolumeData_new(searchYear,searchMonth,searchDay):
                                                        hr,hourlyDict[hr]))
     outString = "+".join(data) + ','
     return outString
+
+#TO-DO : This probably can be done with date range queries on mongo find()
+#TO-DO : Check if the date inserted in mongoDB is in the python date time format
 
 def getTweetData(year,month,day):
     f = open("static/orange/%s-%s.tsv"%(year,month))
