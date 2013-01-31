@@ -8,6 +8,8 @@ import random
 import re
 import urlparse
 import json
+from datetime import datetime
+
 #from config import *
 from collections import defaultdict
 from pymongo import MongoClient
@@ -33,6 +35,7 @@ css = '/static/orange.css'
 connection = MongoClient(host)
 db = connection.sasa
 collection = db.analysedtweets
+archive = db.archivedtweets
 
 @app.route("/")
 def displayOverview():
@@ -44,13 +47,14 @@ def getDygraphsDailyVolumeData():
     columns = ['tweet','retweets','date','sentiment','valence','negative','neutral','positive','unsure']
     dayCounts = defaultdict(int)
     dayList = []
-    for entry in collection.find():
-        date = entry['date']
-        m = re.search(r'^(....)-(..)-(..)T(..)',date)
-        year = int(m.group(1))
-        month = int(m.group(2))
-        day = int(m.group(3))
-        hour = int(m.group(4))
+    for entry in archive.find():
+        date = entry['timeStamp']
+        #print entry
+        #m = re.search(r'^(....)-(..)-(..)T(..)',date)
+        year = date.year
+        month = date.month
+        day = date.day
+        hour = date.hour
         #    month, day, hour = map(lambda x: getattr(re.search(r'^(....)-(..)-(..)T(..)',date), 'group')(x), [1,2,3,4])
         dayCounts[(year,month,day)] +=1
         if dayCounts[(year,month,day)] == 1:
