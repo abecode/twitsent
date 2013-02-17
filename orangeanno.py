@@ -10,7 +10,7 @@ from flask import render_template
 #from config import *
 from collections import defaultdict
 
-MAX_ANNOTATIONS = 26
+MAX_ANNOTATIONS = 25
 
 #for setting up the host name
 import subprocess
